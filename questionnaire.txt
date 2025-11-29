@@ -4,66 +4,103 @@ Please complete this questionnaire by selecting the appropriate answer for each 
 
 1. Import/export:
 
-    - Script command to export a csv file: Y/N
-    - Exported CSV aligns with Google calendar specs: Y/N
-    - Import ics or ical file implementation: Y/N
-    - Script command to export a csv file: Y/N
-    - Exported CSV aligns with Google calendar specs: Y/N
-    - Exported ics or ical aligns with Google calendar specs: Y/N
+    - Script command to export a csv file: Y/N - Y
+
+    - Exported CSV aligns with Google calendar specs: Y/N - Y
+
+    - Import ics or ical file implementation: Y/N - N
+
+    - Script command to export an ics or ical file: Y/N - Y
+
+    - Exported ics or ical aligns with Google calendar specs: Y/N - Y
 
 2. Multiple calendars:
 
-    - A user can create more than one calendar with different timezones: Y/N
-    - Script commands to support this feature: Y/N
-    - GUI supports this feature: Y/N
-    - Default calendars are supported in GUI: Y/N
-    - Calendars can be switched in GUI: Y/N
-    - Calendars can be switched with commands: Y/N
-    - Existing calendar's properties can be edited from GUI: Y/N
-    - Existing calendar's properties can be edited with commands: Y/N
+    - A user can create more than one calendar with different timezones: Y/N - Y
+
+    - Script commands to support this feature: Y/N - Y
+
+    - GUI supports this feature: Y/N - Y
+
+    - Default calendars are supported in GUI: Y/N - Y
+
+    - Calendars can be switched in GUI: Y/N - Y
+
+    - Calendars can be switched with commands: Y/N - Y
+
+    - Existing calendar's properties can be edited from GUI: Y/N - N
+
+    - Existing calendar's properties can be edited with commands: Y/N - Y
 
 3. Events:
-    - Single events creation is implemented: Y/N
-    - Recurring events creation is implemented: Y/N
-    - Single events can be created with a text command: Y/N
-    - Recurring events can be created with a text command: Y/N
-    - Single events can be created in a calendar from GUI: Y/N
-    - Recurring events can be created in a calendar from GUI: Y/N
 
-    - Copy event from source to target calendar is implemented: Y/N
-    - Copy event from source to target calendar on a different date and timezone is implemented: Y/N
-    - Copy a series of events from source to target calendar is implemented: Y/N
-    - Copy events can be done via text commands: Y/N
+    - Single events creation is implemented: Y/N - Y
 
-    - Editing single event properties is implemented: Y/N
-    - Editing recurring event properties is implemented: Y/N
-    - Editing single event properties via text command: Y/N
-    - Editing recurring event properties via GUI action: Y/N
+    - Recurring events creation is implemented: Y/N - Y
 
-    - Querying days for events is implemented: Y/N
-    - Events on a day can be printed via a command: Y/N
-    - Events on a day can be displayed from GUI: Y/N
+    - Single events can be created with a text command: Y/N - Y
+
+    - Recurring events can be created with a text command: Y/N - Y
+
+    - Single events can be created in a calendar from GUI: Y/N - Y
+
+    - Recurring events can be created in a calendar from GUI: Y/N - Y
+
+    - Copy event from source to target calendar is implemented: Y/N - Y
+
+    - Copy event from source to target calendar on a different date and timezone is implemented: Y/N - Y
+
+    - Copy a series of events from source to target calendar is implemented: Y/N - Y
+
+    - Copy events can be done via text commands: Y/N - Y
+
+    - Editing single event properties is implemented: Y/N - Y
+
+    - Editing recurring event properties is implemented: Y/N - Y
+
+    - Editing single event properties via text command: Y/N - Y
+
+    - Editing recurring event properties via GUI action: Y/N - Y
+
+    - Querying days for events is implemented: Y/N - Y
+
+    - Events on a day can be printed via a command: Y/N - Y
+
+    - Events on a day can be displayed from GUI: Y/N - Y
 
 4. Graphical Interface
 
-    - The GUI has a view to display the month view of a calendar: Y/N
-    - The GUI allows a user to select a calendar and change timezones: Y/N
-    - The GUI allows a user to navigate between months: Y/N
-    - The GUI allows a user to see the events on a day in selected calendar: Y/N
-    - The GUI allows a user to create different event types: Y/N
-    - The GUI allows a user to view created events: Y/N
-    - The view allows a user to modify existing events: Y/N
+    - The GUI has a view to display the month view of a calendar: Y/N - Y
 
-4. Program:
+    - The GUI allows a user to select a calendar and change timezones: Y/N - Y
 
-    - Program runs by running main? Y/N
-    - Program runs correctly in interactive mode? Y/N
-    - Program runs correctly in headless mode by providing a script file? Y/N
-    - Program opens expected and functional GUI in gui mode? Y/N
+    - The GUI allows a user to navigate between months: Y/N - Y
 
-5. Testing
+    - The GUI allows a user to see the events on a day in selected calendar: Y/N - Y
 
-    - Have you written tests to verify every feature: Y/N
-    - Is your mutation coverage for model and controller 90\% or more: Y/N
-    - Is your test strength for model and controller 90\% or more: Y/N
-    - Is your branch coverage for model and controller 90\% or more: Y/N
+    - The GUI allows a user to create different event types: Y/N - Y
+
+    - The GUI allows a user to view created events: Y/N - Y
+
+    - The view allows a user to modify existing events: Y/N - Y
+
+5. Program:
+
+    - Program runs by running main? Y/N - Y
+
+    - Program runs correctly in interactive mode? Y/N - Y
+
+    - Program runs correctly in headless mode by providing a script file? Y/N - Y
+
+    - Program opens expected and functional GUI in gui mode? Y/N - Y
+
+6. Testing
+
+    - Have you written tests to verify every feature: Y/N - Y
+
+    - Is your mutation coverage for model and controller 90% or more: Y/N - N
+
+    - Is your test strength for model and controller 90% or more: Y/N - N
+
+    - Is your branch coverage for model and controller 90% or more: Y/N - Y
+
