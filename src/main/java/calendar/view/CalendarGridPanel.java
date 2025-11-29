@@ -178,7 +178,7 @@ public class CalendarGridPanel extends JPanel {
       dayButton.setFont(boldFont);
       dayButton.setForeground(CalendarTheme.EVENT_INDICATOR_COLOR);
       if (!isWeekView) {
-        dayButton.setText(String.valueOf(date.getDayOfMonth()) + " •");
+        dayButton.setText(String.valueOf(date.getDayOfMonth()) + " .");
       }
     }
 
