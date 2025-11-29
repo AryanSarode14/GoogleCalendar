@@ -158,7 +158,7 @@ public class CalendarRunner {
   private static void launchHeadless(String commandsFilePath) throws IOException {
     System.out.println("Starting Calendar Application in HEADLESS mode...");
     System.out.println("Processing commands from: " + commandsFilePath);
-    System.out.println("═══════════════════════════════════════════════════════════");
+    System.out.println("===========================================================");
     System.out.println();
 
     CalendarManager manager = new CalendarManager();
@@ -175,7 +175,7 @@ public class CalendarRunner {
     }
 
     System.out.println();
-    System.out.println("═══════════════════════════════════════════════════════════");
+    System.out.println("===========================================================");
     System.out.println("Batch processing completed successfully.");
   }
 }
