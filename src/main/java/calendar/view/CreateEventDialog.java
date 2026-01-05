@@ -5,7 +5,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -59,37 +62,54 @@ public class CreateEventDialog extends JDialog {
     super(parent, "Create New Event", true);
     this.confirmed = false;
 
-    setSize(550, 550);
+    setSize(580, 600);
     setResizable(false);
     setLayout(new BorderLayout());
 
     JPanel mainPanel = new JPanel();
-    mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+    mainPanel.setLayout(new BorderLayout());
     mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
-    
+    // Title panel
+    JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
     JLabel titleLabel = new JLabel("Create New Event");
     titleLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
-    titleLabel.setAlignmentX(LEFT_ALIGNMENT);
-    mainPanel.add(titleLabel);
-    mainPanel.add(Box.createVerticalStrut(15));
+    titlePanel.add(titleLabel);
+    mainPanel.add(titlePanel, BorderLayout.NORTH);
 
-    
-    addLabeledField(mainPanel, "Subject (required):", subjectField = new JTextField(30), true);
+    // Content panel with GridBagLayout for proper alignment
+    final JPanel contentPanel = new JPanel(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(8, 5, 8, 5);
+    gbc.anchor = GridBagConstraints.WEST;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
 
-    
-    dateField = new JTextField(15);
+    int row = 0;
+
+    // Subject field
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.weightx = 0.0;
+    subjectField = new JTextField(25);
+    subjectField.setToolTipText("Enter the event title or subject");
+    addLabeledFieldGrid(contentPanel, "Subject (required):", subjectField, true, gbc, row++);
+
+    // Date field
+    dateField = new JTextField(12);
     if (defaultDate != null) {
       dateField.setText(defaultDate.format(DATE_FORMAT));
     } else {
       dateField.setText(LocalDate.now().format(DATE_FORMAT));
     }
-    addLabeledField(mainPanel, "Date (yyyy-MM-dd):", dateField, false);
+    dateField.setToolTipText("Date format: YYYY-MM-DD (e.g., 2024-01-15)");
+    addLabeledFieldGrid(contentPanel, "Date (yyyy-MM-dd):", dateField, false, gbc, row++);
 
-    
+    // All-day checkbox
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.gridwidth = 2;
     allDayCheckbox = new JCheckBox("All-day event (8:00 AM - 5:00 PM)");
     allDayCheckbox.setFont(new Font("SansSerif", Font.PLAIN, 13));
-    allDayCheckbox.setAlignmentX(LEFT_ALIGNMENT);
     allDayCheckbox.addActionListener(e -> {
       boolean allDay = allDayCheckbox.isSelected();
       startTimeField.setEnabled(!allDay);
@@ -99,72 +119,100 @@ public class CreateEventDialog extends JDialog {
         endTimeField.setText("17:00");
       }
     });
-    mainPanel.add(allDayCheckbox);
-    mainPanel.add(Box.createVerticalStrut(10));
+    contentPanel.add(allDayCheckbox, gbc);
+    row++;
+    gbc.gridwidth = 1;
 
-    
+    // Time fields in a horizontal layout
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.gridwidth = 1;
+    gbc.weightx = 0.0;
+    JLabel timeLabel = new JLabel("Time:");
+    timeLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
+    timeLabel.setPreferredSize(new Dimension(140, 20));
+    contentPanel.add(timeLabel, gbc);
+
+    gbc.gridx = 1;
+    gbc.gridwidth = 2;
+    gbc.weightx = 1.0;
     JPanel timePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
     timePanel.setAlignmentX(LEFT_ALIGNMENT);
-    timePanel.setMaximumSize(new Dimension(500, 60));
 
     JPanel startPanel = new JPanel();
     startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.Y_AXIS));
-    JLabel startLabel = new JLabel("Start Time (HH:mm):");
-    startLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
+    JLabel startLabel = new JLabel("Start (HH:mm):");
+    startLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
     startTimeField = new JTextField(8);
     startTimeField.setText("09:00");
     startTimeField.setFont(new Font("SansSerif", Font.PLAIN, 13));
+    startTimeField.setToolTipText("Time format: HH:mm (24-hour, e.g., 14:30 for 2:30 PM)");
     startPanel.add(startLabel);
-    startPanel.add(Box.createVerticalStrut(3));
     startPanel.add(startTimeField);
 
     JPanel endPanel = new JPanel();
     endPanel.setLayout(new BoxLayout(endPanel, BoxLayout.Y_AXIS));
-    JLabel endLabel = new JLabel("End Time (HH:mm):");
-    endLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
+    JLabel endLabel = new JLabel("End (HH:mm):");
+    endLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
     endTimeField = new JTextField(8);
     endTimeField.setText("10:00");
     endTimeField.setFont(new Font("SansSerif", Font.PLAIN, 13));
+    endTimeField.setToolTipText("Time format: HH:mm (24-hour, e.g., 16:00 for 4:00 PM)");
     endPanel.add(endLabel);
-    endPanel.add(Box.createVerticalStrut(3));
     endPanel.add(endTimeField);
 
     timePanel.add(startPanel);
     timePanel.add(endPanel);
-    mainPanel.add(timePanel);
-    mainPanel.add(Box.createVerticalStrut(10));
+    contentPanel.add(timePanel, gbc);
+    row++;
+    gbc.gridwidth = 1;
 
-    
-    addLabeledField(mainPanel, "Location (optional):", locationField = new JTextField(30), false);
+    // Location field
+    addLabeledFieldGrid(contentPanel, "Location (optional):", 
+                        locationField = new JTextField(25), false, gbc, row++);
 
-    
+    // Description field
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.weightx = 0.0;
     JLabel descLabel = new JLabel("Description (optional):");
     descLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
-    descLabel.setAlignmentX(LEFT_ALIGNMENT);
-    mainPanel.add(descLabel);
-    mainPanel.add(Box.createVerticalStrut(3));
+    descLabel.setPreferredSize(new Dimension(140, 20));
+    contentPanel.add(descLabel, gbc);
 
-    descriptionArea = new JTextArea(2, 30);
+    gbc.gridx = 1;
+    gbc.gridwidth = 2;
+    gbc.weightx = 1.0;
+    gbc.fill = GridBagConstraints.BOTH;
+    descriptionArea = new JTextArea(3, 25);
     descriptionArea.setLineWrap(true);
     descriptionArea.setWrapStyleWord(true);
     descriptionArea.setFont(new Font("SansSerif", Font.PLAIN, 13));
     descriptionArea.setBorder(BorderFactory.createCompoundBorder(
         BorderFactory.createLineBorder(Color.GRAY),
-        BorderFactory.createEmptyBorder(3, 3, 3, 3)
+        BorderFactory.createEmptyBorder(5, 5, 5, 5)
     ));
-    descriptionArea.setAlignmentX(LEFT_ALIGNMENT);
-    descriptionArea.setMaximumSize(new Dimension(490, 50));
-    mainPanel.add(descriptionArea);
-    mainPanel.add(Box.createVerticalStrut(10));
+    JScrollPane scrollPane = new JScrollPane(descriptionArea);
+    scrollPane.setPreferredSize(new Dimension(0, 60));
+    contentPanel.add(scrollPane, gbc);
+    row++;
+    gbc.gridwidth = 1;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
 
-    
+    // Private checkbox
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.gridwidth = 2;
     privateCheckbox = new JCheckBox("Mark as private");
     privateCheckbox.setFont(new Font("SansSerif", Font.PLAIN, 13));
-    privateCheckbox.setAlignmentX(LEFT_ALIGNMENT);
-    mainPanel.add(privateCheckbox);
-    mainPanel.add(Box.createVerticalStrut(20));
+    contentPanel.add(privateCheckbox, gbc);
+    row++;
 
-    
+    mainPanel.add(contentPanel, BorderLayout.CENTER);
+
+    // Button panel
+    JPanel buttonPanelWrapper = new JPanel(new BorderLayout());
+    buttonPanelWrapper.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
     final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
 
     JButton createButton = ButtonFactory.createSaveButton("Create Event", 
@@ -177,27 +225,35 @@ public class CreateEventDialog extends JDialog {
     });
     buttonPanel.add(cancelButton);
 
-    mainPanel.add(buttonPanel);
+    buttonPanelWrapper.add(buttonPanel, BorderLayout.CENTER);
+    mainPanel.add(buttonPanelWrapper, BorderLayout.SOUTH);
 
     add(mainPanel, BorderLayout.CENTER);
     setLocationRelativeTo(parent);
   }
 
-  private void addLabeledField(JPanel panel, String labelText, JTextField field, boolean required) {
+  private void addLabeledFieldGrid(JPanel panel, String labelText, JTextField field, 
+                                   boolean required, GridBagConstraints gbc, int row) {
+    // Label
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.weightx = 0.0;
     JLabel label = new JLabel(labelText);
     label.setFont(new Font("SansSerif", Font.PLAIN, 13));
     if (required) {
       label.setForeground(CalendarTheme.REQUIRED_FIELD_LABEL);
     }
-    label.setAlignmentX(LEFT_ALIGNMENT);
-    panel.add(label);
-    panel.add(Box.createVerticalStrut(3));
+    label.setPreferredSize(new Dimension(140, 20));
+    panel.add(label, gbc);
 
+    // Field
+    gbc.gridx = 1;
+    gbc.gridwidth = 2;
+    gbc.weightx = 1.0;
     field.setFont(new Font("SansSerif", Font.PLAIN, 13));
-    field.setMaximumSize(new Dimension(490, 28));
-    field.setAlignmentX(LEFT_ALIGNMENT);
-    panel.add(field);
-    panel.add(Box.createVerticalStrut(10));
+    field.setPreferredSize(new Dimension(0, 28));
+    panel.add(field, gbc);
+    gbc.gridwidth = 1;
   }
 
   private void handleCreate() {
@@ -231,7 +287,11 @@ public class CreateEventDialog extends JDialog {
       dispose();
 
     } catch (DateTimeParseException e) {
-      showError("Invalid date or time format.\n\nDate: yyyy-MM-dd\nTime: HH:mm");
+      showError("Invalid date or time format.\n\n"
+          + "Please check:\n"
+          + "• Date format: YYYY-MM-DD (e.g., 2024-01-15)\n"
+          + "• Time format: HH:mm (24-hour, e.g., 14:30)\n"
+          + "• Start time must be before end time");
     }
   }
 

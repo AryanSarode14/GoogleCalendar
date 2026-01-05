@@ -85,7 +85,7 @@ public class EventDisplayPanel extends JPanel {
   }
 
   /**
-   * Formats a list of events into a display string.
+   * Formats a list of events into a display string with improved formatting.
    *
    * @param events the events to format
    * @return formatted string representation
@@ -95,35 +95,53 @@ public class EventDisplayPanel extends JPanel {
     for (int i = 0; i < events.size(); i++) {
       EventInterface event = events.get(i);
 
-      sb.append(String.format("Event %d\n", i + 1));
-      sb.append("-----------\n");
-      sb.append(String.format("Subject: %s\n", event.getSubject()));
+      // Event header with numbering
+      sb.append(String.format("┌─ Event %d ─────────────────────────────────\n", i + 1));
+      sb.append(String.format("│ Subject: %s\n", event.getSubject()));
 
-      sb.append(String.format("Time: %s - %s\n",
+      // Time display
+      sb.append(String.format("│ Time: %s - %s\n",
           event.getStartDateTime().toLocalTime().format(TIME_12HR_FORMATTER),
           event.getEndDateTime().toLocalTime().format(TIME_12HR_FORMATTER)));
 
+      // Location
       if (event.getLocation().isPresent() && !event.getLocation().get().isEmpty()) {
-        sb.append(String.format("Location: %s\n", event.getLocation().get()));
+        String location = event.getLocation().get();
+        String locationIcon = location.toLowerCase().contains("online") ? "🌐" : "📍";
+        sb.append(String.format("│ %s Location: %s\n", locationIcon, location));
       }
 
+      // Description/Notes
       if (event.getDescription().isPresent() && !event.getDescription().get().isEmpty()) {
         String desc = event.getDescription().get();
-        if (desc.length() > 50) {
-          desc = desc.substring(0, 47) + "...";
+        if (desc.length() > 60) {
+          desc = desc.substring(0, 57) + "...";
         }
-        sb.append(String.format("Notes: %s\n", desc));
+        sb.append(String.format("│ 📝 Notes: %s\n", desc));
       }
 
+      // Event tags
+      boolean hasTags = false;
       if (event.getSeriesId().isPresent()) {
-        sb.append("[Recurring Event]\n");
+        sb.append("│ 🔄 [Recurring Event]\n");
+        hasTags = true;
       }
 
       if (event.isPrivate()) {
-        sb.append("[Private]\n");
+        sb.append("│ 🔒 [Private]\n");
+        hasTags = true;
       }
 
-      sb.append("\n");
+      if (!hasTags) {
+        sb.append("│\n");
+      }
+
+      // Event footer
+      sb.append("└───────────────────────────────────────\n");
+      
+      if (i < events.size() - 1) {
+        sb.append("\n");
+      }
     }
     return sb.toString();
   }

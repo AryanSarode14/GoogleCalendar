@@ -123,19 +123,19 @@ public final class CalendarTheme {
   public static final Color DISABLED_TEXT = Color.GRAY;
 
   /**
-   * Create Event button background color (blue).
+   * Create Event button background color (modern blue).
    */
   public static final Color BUTTON_CREATE_EVENT_BG = new Color(66, 133, 244);
 
   /**
-   * Create Series button background color (green).
+   * Create Series button background color (modern green).
    */
   public static final Color BUTTON_CREATE_SERIES_BG = new Color(52, 168, 83);
 
   /**
-   * Edit Event button background color (yellow/orange).
+   * Edit Event button background color (modern orange).
    */
-  public static final Color BUTTON_EDIT_EVENT_BG = new Color(251, 188, 5);
+  public static final Color BUTTON_EDIT_EVENT_BG = new Color(251, 146, 60);
 
   /**
    * Save/Create button background color (green).
@@ -148,9 +148,14 @@ public final class CalendarTheme {
   public static final Color BUTTON_CANCEL_BG = new Color(234, 67, 53);
 
   /**
-   * Button text color.
+   * Button text color (dark for good contrast on light buttons).
    */
-  public static final Color BUTTON_TEXT = Color.BLACK;
+  public static final Color BUTTON_TEXT = new Color(30, 30, 30);
+  
+  /**
+   * Button text color for dark/colored buttons (white for contrast).
+   */
+  public static final Color BUTTON_TEXT_LIGHT = Color.WHITE;
 
   /**
    * Navigation button active background.

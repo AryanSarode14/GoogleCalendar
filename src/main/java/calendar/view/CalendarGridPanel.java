@@ -172,38 +172,79 @@ public class CalendarGridPanel extends JPanel {
     dayButton.setBackground(Color.WHITE);
     dayButton.setOpaque(true);
 
+    // Store original colors for hover effects
+    Color originalBg = Color.WHITE;
+    Color hoverBg = new Color(240, 248, 255);
+    
+    // Set background based on day of week
+    int dayOfWeek = date.getDayOfWeek().getValue() % 7;
+    if (dayOfWeek == 0) {
+      originalBg = CalendarTheme.SUNDAY_BG;
+      hoverBg = brightenColor(CalendarTheme.SUNDAY_BG, 10);
+    } else if (dayOfWeek == 6) {
+      originalBg = CalendarTheme.SATURDAY_BG;
+      hoverBg = brightenColor(CalendarTheme.SATURDAY_BG, 10);
+    }
     
     if (hasEvents) {
       Font boldFont = isWeekView ? WEEK_BUTTON_BOLD_FONT : DAY_BUTTON_BOLD_FONT;
       dayButton.setFont(boldFont);
       dayButton.setForeground(CalendarTheme.EVENT_INDICATOR_COLOR);
       if (!isWeekView) {
-        dayButton.setText(String.valueOf(date.getDayOfMonth()) + " .");
+        dayButton.setText(String.valueOf(date.getDayOfMonth()) + " ●");
       }
+      dayButton.setToolTipText("Click to view events on " + date);
+    } else {
+      dayButton.setToolTipText("Click to select " + date);
     }
 
     if (isSelected) {
       dayButton.setBackground(CalendarTheme.SELECTED_DAY_BG);
-      dayButton.setBorder(BorderFactory.createLineBorder(
-          CalendarTheme.SELECTED_DAY_BORDER, CalendarTheme.SELECTED_BORDER_WIDTH));
+      dayButton.setBorder(BorderFactory.createCompoundBorder(
+          BorderFactory.createLineBorder(
+              CalendarTheme.SELECTED_DAY_BORDER, CalendarTheme.SELECTED_BORDER_WIDTH),
+          BorderFactory.createEmptyBorder(2, 2, 2, 2)
+      ));
+      hoverBg = brightenColor(CalendarTheme.SELECTED_DAY_BG, 15);
     } else {
-      dayButton.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+      dayButton.setBorder(BorderFactory.createCompoundBorder(
+          BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
+          BorderFactory.createEmptyBorder(2, 2, 2, 2)
+      ));
+      dayButton.setBackground(originalBg);
     }
 
     if (isToday) {
       dayButton.setForeground(CalendarTheme.TODAY_COLOR);
       Font boldFont = isWeekView ? WEEK_BUTTON_BOLD_FONT : DAY_BUTTON_BOLD_FONT;
       dayButton.setFont(boldFont);
+      // Highlight today with a subtle border
+      if (!isSelected) {
+        dayButton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(CalendarTheme.TODAY_COLOR, 2),
+            BorderFactory.createEmptyBorder(2, 2, 2, 2)
+        ));
+      }
     }
 
-    
-    int dayOfWeek = date.getDayOfWeek().getValue() % 7;
-    if (dayOfWeek == 0) {
-      dayButton.setBackground(CalendarTheme.SUNDAY_BG);
-    } else if (dayOfWeek == 6) {
-      dayButton.setBackground(CalendarTheme.SATURDAY_BG);
-    }
-
+    // Add hover effects
+    final Color finalOriginalBg = originalBg;
+    final Color finalHoverBg = hoverBg;
+    dayButton.addMouseListener(new java.awt.event.MouseAdapter() {
+      @Override
+      public void mouseEntered(java.awt.event.MouseEvent e) {
+        if (!isSelected) {
+          dayButton.setBackground(finalHoverBg);
+        }
+      }
+      
+      @Override
+      public void mouseExited(java.awt.event.MouseEvent e) {
+        if (!isSelected) {
+          dayButton.setBackground(finalOriginalBg);
+        }
+      }
+    });
     
     dayButton.addActionListener(e -> {
       if (features != null) {
@@ -212,6 +253,20 @@ public class CalendarGridPanel extends JPanel {
     });
 
     return dayButton;
+  }
+
+  /**
+   * Brightens a color by a given amount.
+   *
+   * @param color the original color
+   * @param amount the amount to brighten (0-255)
+   * @return the brightened color
+   */
+  private Color brightenColor(Color color, int amount) {
+    int r = Math.min(255, color.getRed() + amount);
+    int g = Math.min(255, color.getGreen() + amount);
+    int b = Math.min(255, color.getBlue() + amount);
+    return new Color(r, g, b);
   }
 
   private JLabel createEmptyCell() {

@@ -109,6 +109,7 @@ public class CalendarHeader extends JPanel {
     calendarSelector = new JComboBox<>();
     calendarSelector.setPreferredSize(new Dimension(200, 30));
     calendarSelector.setFont(new Font("SansSerif", Font.BOLD, 12));
+    calendarSelector.setToolTipText("Select the calendar to view and edit");
     calendarSelector.addActionListener(e -> {
       if (features != null && calendarSelector.getSelectedItem() != null) {
         features.switchCalendar((String) calendarSelector.getSelectedItem());
@@ -118,6 +119,23 @@ public class CalendarHeader extends JPanel {
 
     newCalendarButton = new JButton("+ New Calendar");
     newCalendarButton.setFont(new Font("SansSerif", Font.BOLD, 11));
+    newCalendarButton.setToolTipText("Create a new calendar");
+    newCalendarButton.setBackground(new Color(240, 240, 240));
+    newCalendarButton.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+        javax.swing.BorderFactory.createRaisedBevelBorder(),
+        javax.swing.BorderFactory.createEmptyBorder(3, 8, 3, 8)
+    ));
+    newCalendarButton.addMouseListener(new java.awt.event.MouseAdapter() {
+      @Override
+      public void mouseEntered(java.awt.event.MouseEvent e) {
+        newCalendarButton.setBackground(new Color(220, 220, 220));
+      }
+      
+      @Override
+      public void mouseExited(java.awt.event.MouseEvent e) {
+        newCalendarButton.setBackground(new Color(240, 240, 240));
+      }
+    });
     newCalendarButton.addActionListener(e -> {
       if (newCalendarCallback != null) {
         newCalendarCallback.run();

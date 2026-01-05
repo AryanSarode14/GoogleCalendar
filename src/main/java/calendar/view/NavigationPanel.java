@@ -88,13 +88,12 @@ public class NavigationPanel extends JPanel {
   private void buildNavigationControls() {
     final JPanel navPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
 
-    prevButton = new JButton("< Previous");
-    prevButton.setFont(new Font("SansSerif", Font.BOLD, 12));
-    prevButton.addActionListener(e -> {
-      if (features != null) {
-        features.navigateToPreviousMonth();
-      }
-    });
+    prevButton = createStyledNavButton("< Previous", "Go to previous month/week (Left Arrow)", 
+                                       () -> {
+                                         if (features != null) {
+                                           features.navigateToPreviousMonth();
+                                         }
+                                       });
     navPanel.add(prevButton);
 
     monthYearLabel = new JLabel("", SwingConstants.CENTER);
@@ -102,24 +101,22 @@ public class NavigationPanel extends JPanel {
     monthYearLabel.setPreferredSize(new Dimension(250, 30));
     navPanel.add(monthYearLabel);
 
-    nextButton = new JButton("Next >");
-    nextButton.setFont(new Font("SansSerif", Font.BOLD, 12));
-    nextButton.addActionListener(e -> {
-      if (features != null) {
-        features.navigateToNextMonth();
-      }
-    });
+    nextButton = createStyledNavButton("Next >", "Go to next month/week (Right Arrow)",
+                                       () -> {
+                                         if (features != null) {
+                                           features.navigateToNextMonth();
+                                         }
+                                       });
     navPanel.add(nextButton);
 
     navPanel.add(Box.createRigidArea(new Dimension(30, 0)));
 
-    todayButton = new JButton("Today");
-    todayButton.setFont(new Font("SansSerif", Font.BOLD, 12));
-    todayButton.addActionListener(e -> {
-      if (features != null) {
-        features.navigateToToday();
-      }
-    });
+    todayButton = createStyledNavButton("Today", "Jump to today's date (T)",
+                                        () -> {
+                                          if (features != null) {
+                                            features.navigateToToday();
+                                          }
+                                        });
     navPanel.add(todayButton);
 
     navPanel.add(Box.createRigidArea(new Dimension(20, 0)));
@@ -129,6 +126,7 @@ public class NavigationPanel extends JPanel {
     monthViewButton.setFont(new Font("SansSerif", Font.BOLD, 12));
     monthViewButton.setBackground(new Color(200, 200, 200));
     monthViewButton.setFocusPainted(false);
+    monthViewButton.setToolTipText("Switch to month view");
     monthViewButton.addActionListener(e -> {
       if (features != null) {
         features.switchToMonthView();
@@ -141,6 +139,7 @@ public class NavigationPanel extends JPanel {
     weekViewButton.setFont(new Font("SansSerif", Font.BOLD, 12));
     weekViewButton.setBackground(new Color(200, 200, 200));
     weekViewButton.setFocusPainted(false);
+    weekViewButton.setToolTipText("Switch to week view");
     weekViewButton.addActionListener(e -> {
       if (features != null) {
         features.switchToWeekView();
@@ -150,6 +149,45 @@ public class NavigationPanel extends JPanel {
     navPanel.add(weekViewButton);
 
     add(navPanel, BorderLayout.NORTH);
+  }
+
+  /**
+   * Creates a styled navigation button with hover effects and tooltip.
+   *
+   * @param text the button text
+   * @param tooltip the tooltip text
+   * @param action the action to perform
+   * @return the configured button
+   */
+  private JButton createStyledNavButton(String text, String tooltip, Runnable action) {
+    JButton button = new JButton(text);
+    button.setFont(new Font("SansSerif", Font.BOLD, 12));
+    button.setFocusPainted(false);
+    button.setBackground(new Color(230, 230, 230));
+    button.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+        javax.swing.BorderFactory.createRaisedBevelBorder(),
+        javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)
+    ));
+    button.setToolTipText(tooltip);
+    
+    // Add hover effects
+    button.addMouseListener(new java.awt.event.MouseAdapter() {
+      @Override
+      public void mouseEntered(java.awt.event.MouseEvent e) {
+        button.setBackground(new Color(200, 200, 200));
+      }
+      
+      @Override
+      public void mouseExited(java.awt.event.MouseEvent e) {
+        button.setBackground(new Color(230, 230, 230));
+      }
+    });
+    
+    if (action != null) {
+      button.addActionListener(e -> action.run());
+    }
+    
+    return button;
   }
 }
 

@@ -1,6 +1,6 @@
-# Calendar Application - Usage Guide
+# Calendar Application - User Guide
 
-This document provides instructions on how to use the calendar application that you have received.
+This document provides detailed instructions on how to use the calendar application.
 
 ## Building the Project
 
@@ -30,12 +30,6 @@ Or, if running directly from source:
 ./gradlew run
 ```
 
-Or using the main class directly:
-
-```bash
-java -cp build/classes/java/main CalendarRunner
-```
-
 The GUI will open, allowing you to interact with calendars visually.
 
 ### 2. Interactive Mode
@@ -46,12 +40,6 @@ To run the application in interactive command-line mode:
 java -jar build/libs/calendar-1.0.jar --mode interactive
 ```
 
-Or from source:
-
-```bash
-java -cp build/classes/java/main CalendarRunner --mode interactive
-```
-
 In this mode, you can type commands at the prompt. Type `exit` to quit.
 
 ### 3. Headless Mode
@@ -60,12 +48,6 @@ To process commands from a file (batch processing):
 
 ```bash
 java -jar build/libs/calendar-1.0.jar --mode headless <path-to-commands-file>
-```
-
-Or from source:
-
-```bash
-java -cp build/classes/java/main CalendarRunner --mode headless <path-to-commands-file>
 ```
 
 Example:
@@ -152,22 +134,47 @@ Copy a single event to another calendar:
 copy event --id <event-id> --to-calendar "OtherCalendar"
 ```
 
-## Code Status
+## GUI Features
 
-Please refer to the `questionnaire.txt` file for a detailed status of which features are implemented and working. This file provides information about:
+### Keyboard Shortcuts
 
-- Import/export functionality
-- Multiple calendar support
-- Event creation and management
-- GUI features
-- Program execution modes
-- Testing coverage
+- `Ctrl+N` - Create new event
+- `Ctrl+R` - Create new recurring series  
+- `Ctrl+E` - Edit event
+- `←/→` Arrow keys - Navigate months/weeks
+- `T` - Jump to today's date
 
-## Known Issues
+### Interface Elements
 
-If you encounter any issues while using this code, please refer to the `questionnaire.txt` file which indicates which features are fully functional (Y) and which are not (N).
+- **Calendar Grid**: Click on any day to view its events
+- **Event Display Panel**: Shows events for the selected day on the right
+- **Navigation Buttons**: Use Previous/Next to move between months
+- **View Toggle**: Switch between Month and Week views
+- **Action Buttons**: Create events, edit events, and manage calendars
 
-## Getting Help
+### Creating Events in GUI
 
-If you have questions about using this code or encounter problems that prevent you from implementing required features, please contact the code providers. Issues should be documented in your Part 2 submission's USEME file.
+1. Click "New Event" or "New Series" button
+2. Fill in the event details in the dialog
+3. For recurring events, select the days of the week
+4. Click "Create Event" or "Create Series" to save
 
+## Troubleshooting
+
+### Common Issues
+
+**Issue**: "Calendar not found" error
+- **Solution**: Make sure you've created a calendar first using `create calendar` command or the GUI
+
+**Issue**: "Invalid date format" error
+- **Solution**: Use the format `YYYY-MM-DD` for dates (e.g., `2024-01-15`)
+
+**Issue**: "End time must be after start time" error
+- **Solution**: Ensure the end time is later than the start time
+
+### Getting Help
+
+For issues or questions, please check:
+1. The README.md file for general information
+2. Command format examples in this guide
+3. Error messages which often provide specific guidance

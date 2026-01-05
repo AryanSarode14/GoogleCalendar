@@ -5,6 +5,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -79,102 +84,143 @@ public class CreateEventSeriesDialog extends JDialog {
     super(parent, "Create Recurring Series", true);
     this.confirmed = false;
 
-    setSize(600, 650);
+    setSize(650, 700);
     setResizable(false);
     setLayout(new BorderLayout());
 
     JPanel mainPanel = new JPanel();
-    mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-    mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 25, 15, 25));
+    mainPanel.setLayout(new BorderLayout());
+    mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
-    
+    // Title panel
+    JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
     JLabel titleLabel = new JLabel("Create Recurring Event Series");
     titleLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-    titleLabel.setAlignmentX(LEFT_ALIGNMENT);
-    mainPanel.add(titleLabel);
-    mainPanel.add(Box.createVerticalStrut(12));
+    titlePanel.add(titleLabel);
+    mainPanel.add(titlePanel, BorderLayout.NORTH);
 
-    
-    addLabeledField(mainPanel, "Subject (required):", subjectField = new JTextField(30), true);
+    // Content panel with GridBagLayout for proper alignment
+    final JPanel contentPanel = new JPanel(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(8, 5, 8, 5);
+    gbc.anchor = GridBagConstraints.WEST;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
 
-    
+    int row = 0;
+
+    // Subject field
+    subjectField = new JTextField(25);
+    addLabeledFieldGrid(contentPanel, "Subject (required):", subjectField, true, gbc, row++);
+
+    // Start Date field
     startDateField = new JTextField(12);
     if (defaultDate != null) {
       startDateField.setText(defaultDate.format(DATE_FORMAT));
     } else {
       startDateField.setText(LocalDate.now().format(DATE_FORMAT));
     }
-    addLabeledField(mainPanel, "Start Date (yyyy-MM-dd):", startDateField, false);
+    addLabeledFieldGrid(contentPanel, "Start Date (yyyy-MM-dd):", 
+                        startDateField, false, gbc, row++);
 
-    
+    // Time fields
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.weightx = 0.0;
+    JLabel timeLabel = new JLabel("Time:");
+    timeLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+    timeLabel.setPreferredSize(new Dimension(140, 20));
+    contentPanel.add(timeLabel, gbc);
+
+    gbc.gridx = 1;
+    gbc.gridwidth = 2;
+    gbc.weightx = 1.0;
     JPanel timePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
-    timePanel.setAlignmentX(LEFT_ALIGNMENT);
-    timePanel.setMaximumSize(new Dimension(550, 50));
 
     startTimeField = new JTextField(6);
-    JPanel startTimePanel = createTimeFieldPanel("Start (HH:mm):",
-        startTimeField, "09:00");
+    JPanel startTimePanel = createTimeFieldPanel("Start (HH:mm):", startTimeField, "09:00");
     endTimeField = new JTextField(6);
-    JPanel endTimePanel = createTimeFieldPanel("End (HH:mm):",
-        endTimeField, "10:00");
+    JPanel endTimePanel = createTimeFieldPanel("End (HH:mm):", endTimeField, "10:00");
 
     timePanel.add(startTimePanel);
     timePanel.add(endTimePanel);
-    mainPanel.add(timePanel);
-    mainPanel.add(Box.createVerticalStrut(8));
+    contentPanel.add(timePanel, gbc);
+    row++;
+    gbc.gridwidth = 1;
 
-    
-    addLabeledField(mainPanel, "Location:", locationField = new JTextField(30), false);
+    // Location field
+    locationField = new JTextField(25);
+    addLabeledFieldGrid(contentPanel, "Location:", locationField, false, gbc, row++);
 
-    
+    // Description field
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.weightx = 0.0;
     JLabel descLabel = new JLabel("Description:");
     descLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
-    descLabel.setAlignmentX(LEFT_ALIGNMENT);
-    mainPanel.add(descLabel);
-    mainPanel.add(Box.createVerticalStrut(2));
+    descLabel.setPreferredSize(new Dimension(140, 20));
+    contentPanel.add(descLabel, gbc);
 
-    descriptionArea = new JTextArea(2, 30);
+    gbc.gridx = 1;
+    gbc.gridwidth = 2;
+    gbc.weightx = 1.0;
+    gbc.fill = GridBagConstraints.BOTH;
+    descriptionArea = new JTextArea(3, 25);
     descriptionArea.setLineWrap(true);
+    descriptionArea.setWrapStyleWord(true);
     descriptionArea.setFont(new Font("SansSerif", Font.PLAIN, 12));
-    descriptionArea.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-    descriptionArea.setAlignmentX(LEFT_ALIGNMENT);
-    descriptionArea.setMaximumSize(new Dimension(540, 40));
-    mainPanel.add(descriptionArea);
-    mainPanel.add(Box.createVerticalStrut(8));
+    descriptionArea.setBorder(BorderFactory.createCompoundBorder(
+        BorderFactory.createLineBorder(Color.GRAY),
+        BorderFactory.createEmptyBorder(5, 5, 5, 5)
+    ));
+    JScrollPane scrollPane = new JScrollPane(descriptionArea);
+    scrollPane.setPreferredSize(new Dimension(0, 60));
+    contentPanel.add(scrollPane, gbc);
+    row++;
+    gbc.gridwidth = 1;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
 
-    
+    // Private checkbox
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.gridwidth = 2;
     privateCheckbox = new JCheckBox("Private");
     privateCheckbox.setFont(new Font("SansSerif", Font.PLAIN, 12));
-    privateCheckbox.setAlignmentX(LEFT_ALIGNMENT);
-    mainPanel.add(privateCheckbox);
-    mainPanel.add(Box.createVerticalStrut(12));
+    contentPanel.add(privateCheckbox, gbc);
+    row++;
+    gbc.gridwidth = 1;
 
     
+    // Weekday selection
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.gridwidth = 3;
+    gbc.weightx = 1.0;
     JLabel weekdayLabel = new JLabel("Repeat on (select at least one):");
     weekdayLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
     weekdayLabel.setForeground(CalendarTheme.REQUIRED_FIELD_LABEL);
-    weekdayLabel.setAlignmentX(LEFT_ALIGNMENT);
-    mainPanel.add(weekdayLabel);
-    mainPanel.add(Box.createVerticalStrut(5));
+    contentPanel.add(weekdayLabel, gbc);
+    row++;
 
-    JPanel weekdayPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 3));
-    weekdayPanel.setAlignmentX(LEFT_ALIGNMENT);
-    weekdayPanel.setMaximumSize(new Dimension(550, 35));
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.gridwidth = 3;
+    JPanel weekdayPanel = new JPanel(new GridLayout(2, 4, 10, 8));
+    weekdayPanel.setPreferredSize(new Dimension(0, 70));
 
     Font cbFont = new Font("SansSerif", Font.PLAIN, 12);
-    sunCheckbox = new JCheckBox("Sun");
+    sunCheckbox = new JCheckBox("Sunday");
     sunCheckbox.setFont(cbFont);
-    monCheckbox = new JCheckBox("Mon");
+    monCheckbox = new JCheckBox("Monday");
     monCheckbox.setFont(cbFont);
-    tueCheckbox = new JCheckBox("Tue");
+    tueCheckbox = new JCheckBox("Tuesday");
     tueCheckbox.setFont(cbFont);
-    wedCheckbox = new JCheckBox("Wed");
+    wedCheckbox = new JCheckBox("Wednesday");
     wedCheckbox.setFont(cbFont);
-    thuCheckbox = new JCheckBox("Thu");
+    thuCheckbox = new JCheckBox("Thursday");
     thuCheckbox.setFont(cbFont);
-    friCheckbox = new JCheckBox("Fri");
+    friCheckbox = new JCheckBox("Friday");
     friCheckbox.setFont(cbFont);
-    satCheckbox = new JCheckBox("Sat");
+    satCheckbox = new JCheckBox("Saturday");
     satCheckbox.setFont(cbFont);
 
     weekdayPanel.add(sunCheckbox);
@@ -184,14 +230,15 @@ public class CreateEventSeriesDialog extends JDialog {
     weekdayPanel.add(thuCheckbox);
     weekdayPanel.add(friCheckbox);
     weekdayPanel.add(satCheckbox);
+    weekdayPanel.add(new JPanel()); // Empty panel to fill the last grid cell
+    contentPanel.add(weekdayPanel, gbc);
+    row++;
 
-    mainPanel.add(weekdayPanel);
-    mainPanel.add(Box.createVerticalStrut(5));
-
-    
-    JPanel quickPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
-    quickPanel.setAlignmentX(LEFT_ALIGNMENT);
-    quickPanel.setMaximumSize(new Dimension(550, 30));
+    // Quick selection buttons
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.gridwidth = 3;
+    final JPanel quickPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
 
     JButton weekdaysBtn = new JButton("Weekdays");
     weekdaysBtn.setFont(new Font("SansSerif", Font.PLAIN, 11));
@@ -219,16 +266,18 @@ public class CreateEventSeriesDialog extends JDialog {
 
     quickPanel.add(weekdaysBtn);
     quickPanel.add(weekendBtn);
-    mainPanel.add(quickPanel);
-    mainPanel.add(Box.createVerticalStrut(12));
+    contentPanel.add(quickPanel, gbc);
+    row++;
 
-    
+    // Series ends section
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.gridwidth = 3;
     JLabel endLabel = new JLabel("Series ends:");
     endLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
     endLabel.setForeground(CalendarTheme.REQUIRED_FIELD_LABEL);
-    endLabel.setAlignmentX(LEFT_ALIGNMENT);
-    mainPanel.add(endLabel);
-    mainPanel.add(Box.createVerticalStrut(5));
+    contentPanel.add(endLabel, gbc);
+    row++;
 
     final ButtonGroup endGroup = new ButtonGroup();
     endDateRadio = new JRadioButton("On date:");
@@ -239,25 +288,39 @@ public class CreateEventSeriesDialog extends JDialog {
     endGroup.add(occurrencesRadio);
     endDateRadio.setSelected(true);
 
-    JPanel endDatePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-    endDatePanel.setAlignmentX(LEFT_ALIGNMENT);
-    endDatePanel.setMaximumSize(new Dimension(550, 30));
-    endDatePanel.add(endDateRadio);
+    // End date option
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.gridwidth = 1;
+    gbc.weightx = 0.0;
+    contentPanel.add(endDateRadio, gbc);
+
+    gbc.gridx = 1;
+    gbc.gridwidth = 2;
+    gbc.weightx = 1.0;
     endDateField = new JTextField(12);
     endDateField.setFont(new Font("SansSerif", Font.PLAIN, 12));
     endDateField.setText(LocalDate.now().plusMonths(3).format(DATE_FORMAT));
-    endDatePanel.add(endDateField);
-    mainPanel.add(endDatePanel);
+    contentPanel.add(endDateField, gbc);
+    row++;
 
-    JPanel occPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-    occPanel.setAlignmentX(LEFT_ALIGNMENT);
-    occPanel.setMaximumSize(new Dimension(550, 30));
-    occPanel.add(occurrencesRadio);
+    // Occurrences option
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.gridwidth = 1;
+    gbc.weightx = 0.0;
+    contentPanel.add(occurrencesRadio, gbc);
+
+    gbc.gridx = 1;
+    gbc.gridwidth = 2;
+    gbc.weightx = 1.0;
     occurrencesField = new JTextField(6);
     occurrencesField.setFont(new Font("SansSerif", Font.PLAIN, 12));
     occurrencesField.setText("10");
-    occPanel.add(occurrencesField);
-    mainPanel.add(occPanel);
+    occurrencesField.setPreferredSize(new Dimension(80, 25));
+    contentPanel.add(occurrencesField, gbc);
+    row++;
+    gbc.gridwidth = 1;
 
     endDateRadio.addActionListener(e -> {
       endDateField.setEnabled(true);
@@ -269,9 +332,12 @@ public class CreateEventSeriesDialog extends JDialog {
     });
     occurrencesField.setEnabled(false);
 
-    mainPanel.add(Box.createVerticalStrut(15));
+    mainPanel.add(contentPanel, BorderLayout.CENTER);
 
     
+    // Button panel
+    JPanel buttonPanelWrapper = new JPanel(new BorderLayout());
+    buttonPanelWrapper.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
     final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
 
     JButton createButton = ButtonFactory.createSaveButton("Create Series", 
@@ -284,7 +350,8 @@ public class CreateEventSeriesDialog extends JDialog {
     });
     buttonPanel.add(cancelButton);
 
-    mainPanel.add(buttonPanel);
+    buttonPanelWrapper.add(buttonPanel, BorderLayout.CENTER);
+    mainPanel.add(buttonPanelWrapper, BorderLayout.SOUTH);
 
     add(mainPanel, BorderLayout.CENTER);
     setLocationRelativeTo(parent);
@@ -306,21 +373,28 @@ public class CreateEventSeriesDialog extends JDialog {
     return panel;
   }
 
-  private void addLabeledField(JPanel panel, String labelText, JTextField field, boolean required) {
+  private void addLabeledFieldGrid(JPanel panel, String labelText, JTextField field, 
+                                   boolean required, GridBagConstraints gbc, int row) {
+    // Label
+    gbc.gridx = 0;
+    gbc.gridy = row;
+    gbc.weightx = 0.0;
     JLabel label = new JLabel(labelText);
     label.setFont(new Font("SansSerif", Font.PLAIN, 12));
     if (required) {
       label.setForeground(CalendarTheme.REQUIRED_FIELD_LABEL);
     }
-    label.setAlignmentX(LEFT_ALIGNMENT);
-    panel.add(label);
-    panel.add(Box.createVerticalStrut(2));
+    label.setPreferredSize(new Dimension(140, 20));
+    panel.add(label, gbc);
 
+    // Field
+    gbc.gridx = 1;
+    gbc.gridwidth = 2;
+    gbc.weightx = 1.0;
     field.setFont(new Font("SansSerif", Font.PLAIN, 12));
-    field.setMaximumSize(new Dimension(540, 26));
-    field.setAlignmentX(LEFT_ALIGNMENT);
-    panel.add(field);
-    panel.add(Box.createVerticalStrut(8));
+    field.setPreferredSize(new Dimension(0, 26));
+    panel.add(field, gbc);
+    gbc.gridwidth = 1;
   }
 
   private void handleCreate() {
